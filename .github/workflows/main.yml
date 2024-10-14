@@ -1,4 +1,4 @@
-name: Build and Deploy React Vite App
+name: Build and Test React Vite App
 
 on:
   # Trigger the workflow on push to the main branch
@@ -13,53 +13,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out the repository
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js environment
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18' # or the version you're using for Vite
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Adjust the Node.js version if necessary
 
-    # Step 3: Cache node_modules for faster builds
-    - name: Cache node modules
-      uses: actions/cache@v3
-      with:
-        path: node_modules
-        key: node_modules-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          node_modules
+      # Step 3: Cache node_modules for faster builds
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node_modules
 
-    # Step 4: Install dependencies
-    - name: Install dependencies
-      run: npm install
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: npm install
 
-    # Step 5: Build the Vite app
-    - name: Build the Vite app
-      run: npm run build
+      # Step 5: Build the Vite app
+      - name: Build the Vite app
+        run: npm run build
 
-    # Step 6: Upload the build artifacts (optional)
-    - name: Upload production-ready files
-      uses: actions/upload-artifact@v3
-      with:
-        name: production-files
-        path: dist/
-
-  # Optional: Deploy to GitHub Pages or another static hosting service
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    # Step 1: Checkout the repository again
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    # Step 2: Deploy to GitHub Pages
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      # Step 6: Run tests (optional, if you have tests configured)
+      - name: Run tests
+        run: npm run test  # Ensure your project has test scripts configured
